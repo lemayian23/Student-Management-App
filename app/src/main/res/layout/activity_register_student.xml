@@ -199,11 +199,12 @@
                         android:textStyle="bold"
                         android:textColor="#1E40AF" />
 
-                    <ImageView
+                    <TextView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        android:src="@drawable/ic_cloud_sync"
-                        android:tint="#1E40AF" />
+                        android:text="☁️"
+                        android:textSize="14sp"
+                        android:gravity="center" />
 
                 </LinearLayout>
 

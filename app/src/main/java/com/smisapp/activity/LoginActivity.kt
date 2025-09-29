@@ -7,14 +7,8 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.biometric.BiometricPrompt
-import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
 import com.smisapp.MainActivity
 import com.smisapp.R
-import com.smisapp.data.network.AuthManager
-import com.smisapp.data.network.FirebaseManager
-import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
 
@@ -24,16 +18,12 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var btnBiometric: Button
     private lateinit var tvSignUp: TextView
 
-    private lateinit var authManager: AuthManager
-    private lateinit var firebaseManager: FirebaseManager
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
         initializeViews()
         setupClickListeners()
-        checkExistingSession()
     }
 
     private fun initializeViews() {
@@ -43,20 +33,8 @@ class LoginActivity : AppCompatActivity() {
         btnBiometric = findViewById(R.id.btnBiometric)
         tvSignUp = findViewById(R.id.tvSignUp)
 
-        authManager = AuthManager(this)
-        firebaseManager = FirebaseManager.getInstance()
-
-        // Show/hide biometric button based on availability
-        btnBiometric.visibility = if (authManager.isBiometricAvailable()) {
-            android.view.View.VISIBLE
-        } else {
-            android.view.View.GONE
-        }
-
-        // Pre-fill saved email
-        authManager.getSavedEmail()?.let { email ->
-            etEmail.setText(email)
-        }
+        // Hide biometric for now
+        btnBiometric.visibility = android.view.View.GONE
     }
 
     private fun setupClickListeners() {
@@ -64,19 +42,8 @@ class LoginActivity : AppCompatActivity() {
             performLogin()
         }
 
-        btnBiometric.setOnClickListener {
-            performBiometricLogin()
-        }
-
         tvSignUp.setOnClickListener {
-            showSignUpDialog()
-        }
-    }
-
-    private fun checkExistingSession() {
-        if (authManager.isSessionValid()) {
-            // Auto-login with saved session
-            navigateToMain()
+            showSignUpMessage()
         }
     }
 
@@ -89,61 +56,13 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
-        lifecycleScope.launch {
-            val success = firebaseManager.signIn(email, password)
-
-            if (success) {
-                // Save session
-                authManager.saveSession(email, password)
-                Toast.makeText(this@LoginActivity, "Login Successful!", Toast.LENGTH_SHORT).show()
-                navigateToMain()
-            } else {
-                Toast.makeText(this@LoginActivity, "Login failed. Check credentials.", Toast.LENGTH_LONG).show()
-            }
-        }
+        // Simple demo login - always succeeds
+        Toast.makeText(this, "Login Successful!", Toast.LENGTH_SHORT).show()
+        navigateToMain()
     }
 
-    private fun performBiometricLogin() {
-        if (!authManager.isBiometricAvailable()) {
-            Toast.makeText(this, "Biometric authentication not available", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        authManager.authenticateWithBiometric(this).observe(this) { success ->
-            if (success) {
-                val savedEmail = authManager.getSavedEmail()
-                if (savedEmail != null && authManager.isSessionValid()) {
-                    Toast.makeText(this, "Biometric authentication successful!", Toast.LENGTH_SHORT).show()
-                    navigateToMain()
-                } else {
-                    Toast.makeText(this, "No valid session found. Please login manually first.", Toast.LENGTH_LONG).show()
-                }
-            } else {
-                Toast.makeText(this, "Biometric authentication failed", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    private fun showSignUpDialog() {
-        val email = etEmail.text.toString().trim()
-
-        if (email.isEmpty()) {
-            Toast.makeText(this, "Please enter email first", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        lifecycleScope.launch {
-            // Simple sign-up with default password
-            val password = "default123" // In real app, ask for password
-            val success = firebaseManager.signUp(email, password)
-
-            if (success) {
-                Toast.makeText(this@LoginActivity, "Account created! Use password: default123", Toast.LENGTH_LONG).show()
-                etPassword.setText("default123")
-            } else {
-                Toast.makeText(this@LoginActivity, "Sign up failed. Email might be in use.", Toast.LENGTH_LONG).show()
-            }
-        }
+    private fun showSignUpMessage() {
+        Toast.makeText(this, "Sign up feature coming soon!", Toast.LENGTH_SHORT).show()
     }
 
     private fun navigateToMain() {

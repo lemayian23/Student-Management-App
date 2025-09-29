@@ -4,6 +4,7 @@ import com.smisapp.data.dao.StudentDao
 import com.smisapp.data.entity.Student
 import com.smisapp.data.network.FirebaseManager
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.util.UUID
 
@@ -108,9 +109,9 @@ class StudentRepository(
         }
     }
 
-    // Search students
+    // Search students - FIXED: Use .first() to get the list from Flow
     suspend fun searchStudents(query: String): List<Student> {
-        val allStudents = studentDao.getAllStudents()
+        val allStudents = studentDao.getAllStudents().first() // Get the actual list
         return allStudents.filter { student ->
             student.name.contains(query, ignoreCase = true) ||
                     student.regNumber.contains(query, ignoreCase = true) ||
@@ -121,25 +122,25 @@ class StudentRepository(
 
     // Private helper methods
     private suspend fun syncWithCloud(localStudents: List<Student>) {
-        // Background sync - don't block UI
-        if (firebaseManager.isUserLoggedIn()) {
-            firebaseManager.syncAllStudentsToCloud(localStudents)
-        }
+        // Background sync - temporarily disabled
+        // if (firebaseManager.isUserLoggedIn()) {
+        //     firebaseManager.syncAllStudentsToCloud(localStudents)
+        // }
     }
 
     private suspend fun syncStudentToCloud(student: Student) {
-        if (firebaseManager.isUserLoggedIn()) {
-            val firebaseId = firebaseManager.syncStudentToCloud(student)
-            if (firebaseId.isNotEmpty()) {
-                // Update local student with Firebase ID and mark as synced
-                studentDao.updateStudent(
-                    student.copy(
-                        firebaseId = firebaseId,
-                        isSynced = true,
-                        updatedAt = System.currentTimeMillis()
-                    )
-                )
-            }
-        }
+        // Temporarily disabled
+        // if (firebaseManager.isUserLoggedIn()) {
+        //     val firebaseId = firebaseManager.syncStudentToCloud(student)
+        //     if (firebaseId.isNotEmpty()) {
+        //         studentDao.updateStudent(
+        //             student.copy(
+        //                 firebaseId = firebaseId,
+        //                 isSynced = true,
+        //                 updatedAt = System.currentTimeMillis()
+        //             )
+        //         )
+        //     }
+        // }
     }
 }

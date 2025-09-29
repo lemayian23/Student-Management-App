@@ -1,14 +1,6 @@
 package com.smisapp.data.network
 
-import android.content.Context
-import android.util.Log
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.firestore
-import com.google.firebase.auth.auth
-import com.google.firebase.storage.storage
 import com.smisapp.data.entity.Student
-import kotlinx.coroutines.tasks.await
-import java.util.UUID
 
 class FirebaseManager private constructor() {
 
@@ -23,131 +15,48 @@ class FirebaseManager private constructor() {
         }
     }
 
-    private val db = Firebase.firestore
-    private val auth = Firebase.auth
-    private val storage = Firebase.storage
-
-    // Authentication methods
+    // Authentication methods - return false for now
     suspend fun signIn(email: String, password: String): Boolean {
-        return try {
-            val result = auth.signInWithEmailAndPassword(email, password).await()
-            result.user != null
-        } catch (e: Exception) {
-            Log.e("FirebaseManager", "Sign in failed: ${e.message}")
-            false
-        }
+        return false // Temporarily disabled
     }
 
     suspend fun signUp(email: String, password: String): Boolean {
-        return try {
-            val result = auth.createUserWithEmailAndPassword(email, password).await()
-            result.user != null
-        } catch (e: Exception) {
-            Log.e("FirebaseManager", "Sign up failed: ${e.message}")
-            false
-        }
+        return false // Temporarily disabled
     }
 
-    fun isUserLoggedIn(): Boolean = auth.currentUser != null
+    fun isUserLoggedIn(): Boolean = false // Temporarily disabled
 
-    fun getCurrentUserId(): String? = auth.currentUser?.uid
+    fun getCurrentUserId(): String? = null // Temporarily disabled
 
     fun signOut() {
-        auth.signOut()
+        // Do nothing for now
     }
 
-    // Student data sync methods
+    // Student data sync methods - return empty values for now
     suspend fun syncStudentToCloud(student: Student): String {
-        return try {
-            val studentData = student.toMap().toMutableMap()
-            val firebaseId = if (student.firebaseId.isEmpty()) {
-                UUID.randomUUID().toString()
-            } else {
-                student.firebaseId
-            }
-
-            studentData["firebaseId"] = firebaseId
-            studentData["userId"] = getCurrentUserId() ?: "unknown"
-
-            db.collection("students")
-                .document(firebaseId)
-                .set(studentData)
-                .await()
-
-            firebaseId
-        } catch (e: Exception) {
-            Log.e("FirebaseManager", "Sync student failed: ${e.message}")
-            ""
-        }
+        return "" // Temporarily disabled
     }
 
     suspend fun getStudentsFromCloud(): List<Student> {
-        return try {
-            val userId = getCurrentUserId() ?: return emptyList()
-
-            val result = db.collection("students")
-                .whereEqualTo("userId", userId)
-                .get()
-                .await()
-
-            result.documents.map { document ->
-                Student.fromMap(document.data!!)
-            }
-        } catch (e: Exception) {
-            Log.e("FirebaseManager", "Get students failed: ${e.message}")
-            emptyList()
-        }
+        return emptyList() // Temporarily disabled
     }
 
     suspend fun deleteStudentFromCloud(firebaseId: String): Boolean {
-        return try {
-            db.collection("students")
-                .document(firebaseId)
-                .delete()
-                .await()
-            true
-        } catch (e: Exception) {
-            Log.e("FirebaseManager", "Delete student failed: ${e.message}")
-            false
-        }
+        return false // Temporarily disabled
     }
 
-    // File upload for student photos
+    // File upload - return empty string for now
     suspend fun uploadStudentPhoto(photoBytes: ByteArray, studentId: String): String {
-        return try {
-            val storageRef = storage.reference
-            val photoRef = storageRef.child("student_photos/$studentId.jpg")
-
-            val uploadTask = photoRef.putBytes(photoBytes).await()
-            val downloadUrl = photoRef.downloadUrl.await()
-
-            downloadUrl.toString()
-        } catch (e: Exception) {
-            Log.e("FirebaseManager", "Photo upload failed: ${e.message}")
-            ""
-        }
+        return "" // Temporarily disabled
     }
 
-    // Sync all local data to cloud
+    // Sync all - return false for now
     suspend fun syncAllStudentsToCloud(students: List<Student>): Boolean {
-        return try {
-            students.forEach { student ->
-                if (!student.isSynced) {
-                    val firebaseId = syncStudentToCloud(student)
-                    if (firebaseId.isNotEmpty()) {
-                        // Mark as synced in local DB (you'll update this later)
-                    }
-                }
-            }
-            true
-        } catch (e: Exception) {
-            Log.e("FirebaseManager", "Bulk sync failed: ${e.message}")
-            false
-        }
+        return false // Temporarily disabled
     }
 
-    // Pull cloud data to local
+    // Pull from cloud - return empty list for now
     suspend fun pullStudentsFromCloud(): List<Student> {
-        return getStudentsFromCloud()
+        return emptyList() // Temporarily disabled
     }
 }

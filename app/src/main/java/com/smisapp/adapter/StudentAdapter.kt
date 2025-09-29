@@ -47,7 +47,7 @@ class StudentAdapter(
             holder.ivSyncStatus.contentDescription = "Not synced"
         }
 
-        // Load student photo
+// Load student photo
         if (student.photoUrl.isNotEmpty()) {
             Glide.with(holder.itemView.context)
                 .load(student.photoUrl)

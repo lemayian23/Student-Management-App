@@ -1,7 +1,6 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    // REMOVE the Firebase plugin for now - we'll initialize manually
 }
 
 android {
@@ -58,12 +57,8 @@ dependencies {
     // RecyclerView
     implementation("androidx.recyclerview:recyclerview:1.3.2")
 
-// Firebase - FIXED: Use explicit versions instead of BOM
-    implementation("com.google.firebase:firebase-auth:22.3.1")
-    implementation("com.google.firebase:firebase-firestore:24.10.2")
-    implementation("com.google.firebase:firebase-storage:20.3.0")
-    implementation("com.google.firebase:firebase-analytics:21.5.0")
-
+    // Glide for image loading (simplified - without kapt for now)
+    implementation("com.github.bumptech.glide:glide:4.16.0")
 
     // Biometric
     implementation("androidx.biometric:biometric:1.1.0")
