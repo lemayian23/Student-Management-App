@@ -58,11 +58,12 @@ dependencies {
     // RecyclerView
     implementation("androidx.recyclerview:recyclerview:1.3.2")
 
-    // Firebase - Manual initialization (no plugin needed)
-    implementation("com.google.firebase:firebase-bom:32.8.0")
-    implementation("com.google.firebase:firebase-auth-ktx")
-    implementation("com.google.firebase:firebase-firestore-ktx")
-    implementation("com.google.firebase:firebase-storage-ktx")
+// Firebase - FIXED: Use explicit versions instead of BOM
+    implementation("com.google.firebase:firebase-auth:22.3.1")
+    implementation("com.google.firebase:firebase-firestore:24.10.2")
+    implementation("com.google.firebase:firebase-storage:20.3.0")
+    implementation("com.google.firebase:firebase-analytics:21.5.0")
+
 
     // Biometric
     implementation("androidx.biometric:biometric:1.1.0")
