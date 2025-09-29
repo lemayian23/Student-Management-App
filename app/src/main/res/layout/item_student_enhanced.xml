@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     app:cardCornerRadius="12dp"
-    app:cardElevation="2dp"
+    app:cardElevation="4dp"
     app:cardUseCompatPadding="true">
 
     <LinearLayout
@@ -20,16 +21,15 @@
             android:id="@+id/ivStudentPhoto"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/ic_person_placeholder"
             android:scaleType="centerCrop"
-            android:contentDescription="Student photo"
             android:background="@drawable/circle_background"
-            android:layout_marginEnd="16dp" />
+            android:src="@drawable/ic_person_placeholder" />
 
         <!-- Student Details -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:layout_weight="1"
             android:orientation="vertical">
 
@@ -39,48 +39,42 @@
                 android:layout_height="wrap_content"
                 android:text="Student Name"
                 android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#333333" />
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvRegNumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Registration Number"
+                android:text="REG001"
                 android:textSize="14sp"
-                android:textColor="#666666"
-                android:layout_marginTop="2dp" />
+                android:textColor="?attr/colorPrimary" />
 
             <TextView
                 android:id="@+id/tvCourse"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Course"
-                android:textSize="14sp"
-                android:textColor="#666666"
-                android:layout_marginTop="2dp" />
+                android:text="Computer Science"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/tvEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Email"
+                android:text="student@email.com"
                 android:textSize="12sp"
-                android:textColor="#888888"
-                android:layout_marginTop="4dp" />
+                android:textColor="?android:attr/textColorSecondary" />
 
         </LinearLayout>
 
-        <!-- Sync Status Icon -->
+        <!-- Sync Status -->
         <ImageView
             android:id="@+id/ivSyncStatus"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_cloud_done"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="8dp"
-            app:tint="#10B981" />
+            android:src="@drawable/ic_cloud_done"
+            android:contentDescription="Sync status" />
 
     </LinearLayout>
 
-</com.google.android.material.card.MaterialCardView>
+</androidx.cardview.widget.CardView>

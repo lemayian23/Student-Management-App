@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.smisapp.R
 import com.smisapp.SMISApplication
 import com.smisapp.data.entity.Student
+import com.smisapp.data.repository.Resource
 import com.smisapp.data.repository.StudentRepository
 import com.smisapp.data.network.FirebaseManager
 import kotlinx.coroutines.launch
@@ -125,12 +126,12 @@ class RegisterStudentActivity : AppCompatActivity() {
         val phone = etPhone.text.toString().trim()
 
         if (name.isEmpty() || regNumber.isEmpty() || course.isEmpty()) {
-            Toast.makeText(this, "Please fill required fields (Name, Reg Number, Course)", Toast.LENGTH_SHORT).show()
+            showToast("Please fill required fields (Name, Reg Number, Course)")
             return
         }
 
         if (!isValidEmail(email) && email.isNotEmpty()) {
-            Toast.makeText(this, "Please enter a valid email address", Toast.LENGTH_SHORT).show()
+            showToast("Please enter a valid email address")
             return
         }
 
@@ -152,26 +153,55 @@ class RegisterStudentActivity : AppCompatActivity() {
                     firebaseId = ""
                 )
 
-                // Add student to repository
-                val studentId = studentRepository.addStudent(student)
+                // Add student to repository - NOW HANDLES RESOURCE TYPE
+                when (val result = studentRepository.addStudent(student)) {
+                    is Resource.Success -> {
+                        val studentId = result.data
 
-                // Upload photo if selected
-                if (photoBytes != null && switchCloudSync.isChecked) {
-                    val photoUrl = firebaseManager.uploadStudentPhoto(photoBytes!!, studentId)
-                    if (photoUrl.isNotEmpty()) {
-                        // Update student with photo URL
-                        val updatedStudent = student.copy(photoUrl = photoUrl)
-                        studentRepository.updateStudent(updatedStudent)
+                        // Upload photo if selected
+                        if (photoBytes != null && switchCloudSync.isChecked) {
+                            val photoUrl = firebaseManager.uploadStudentPhoto(photoBytes!!, studentId)
+                            if (photoUrl.isNotEmpty()) {
+                                // Update student with photo URL
+                                val updatedStudent = student.copy(photoUrl = photoUrl)
+                                when (val updateResult = studentRepository.updateStudent(updatedStudent)) {
+                                    is Resource.Success -> {
+                                        showLoading(false)
+                                        showToast("Student registered successfully with photo! 📸")
+                                        clearForm()
+                                    }
+                                    is Resource.Error -> {
+                                        showLoading(false)
+                                        showToast("Student registered but photo upload failed: ${updateResult.message}")
+                                        clearForm()
+                                    }
+                                    is Resource.Loading -> {
+                                        // Loading handled by showLoading
+                                    }
+                                }
+                            } else {
+                                showLoading(false)
+                                showToast("Student registered successfully! ✅")
+                                clearForm()
+                            }
+                        } else {
+                            showLoading(false)
+                            showToast("Student registered successfully! ✅")
+                            clearForm()
+                        }
+                    }
+                    is Resource.Error -> {
+                        showLoading(false)
+                        showToast("Failed to register student: ${result.message}")
+                    }
+                    is Resource.Loading -> {
+                        // Loading state is already handled by showLoading(true)
                     }
                 }
 
-                showLoading(false)
-                Toast.makeText(this@RegisterStudentActivity, "Student registered successfully!", Toast.LENGTH_SHORT).show()
-                clearForm()
-
             } catch (e: Exception) {
                 showLoading(false)
-                Toast.makeText(this@RegisterStudentActivity, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+                showToast("Unexpected error: ${e.message}")
             }
         }
     }
@@ -183,6 +213,7 @@ class RegisterStudentActivity : AppCompatActivity() {
     private fun showLoading(show: Boolean) {
         progressBar.visibility = if (show) android.view.View.VISIBLE else android.view.View.GONE
         btnRegister.isEnabled = !show
+        btnTakePhoto.isEnabled = !show
     }
 
     private fun clearForm() {
@@ -194,5 +225,9 @@ class RegisterStudentActivity : AppCompatActivity() {
         ivStudentPhoto.setImageResource(R.drawable.ic_person_placeholder)
         selectedImageUri = null
         photoBytes = null
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

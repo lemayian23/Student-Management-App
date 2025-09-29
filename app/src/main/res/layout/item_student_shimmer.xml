@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.facebook.shimmer.ShimmerFrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:shimmer_auto_start="true">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <!-- Profile Photo Placeholder -->
+            <View
+                android:id="@+id/shimmerPhoto"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@color/shimmer_color" />
+
+            <!-- Text Content -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <!-- Name Placeholder -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"
+                    android:background="@color/shimmer_color"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginEnd="40dp" />
+
+                <!-- Reg Number Placeholder -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="16dp"
+                    android:background="@color/shimmer_color"
+                    android:layout_marginBottom="6dp"
+                    android:layout_marginEnd="80dp" />
+
+                <!-- Course Placeholder -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="16dp"
+                    android:background="@color/shimmer_color"
+                    android:layout_marginBottom="6dp"
+                    android:layout_marginEnd="60dp" />
+
+                <!-- Email Placeholder -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="14dp"
+                    android:background="@color/shimmer_color"
+                    android:layout_marginEnd="20dp" />
+
+            </LinearLayout>
+
+            <!-- Sync Status Placeholder -->
+            <View
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@color/shimmer_color"
+                android:layout_marginStart="8dp" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</com.facebook.shimmer.ShimmerFrameLayout>

@@ -3,30 +3,42 @@ package com.smisapp.activity
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.smisapp.R
 import com.smisapp.SMISApplication
+import com.smisapp.adapter.ShimmerStudentAdapter
 import com.smisapp.adapter.StudentAdapter
+import com.smisapp.animation.StudentItemAnimator
+import com.smisapp.animation.StudentItemDecoration
 import com.smisapp.data.entity.Student
+import com.smisapp.data.repository.Resource
 import com.smisapp.data.repository.StudentRepository
 import com.smisapp.data.network.FirebaseManager
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import androidx.appcompat.app.AlertDialog
 
 class ViewStudentsActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var tvEmpty: TextView
+    private lateinit var recyclerViewShimmer: RecyclerView
+    private lateinit var emptyStateView: LinearLayout
+    private lateinit var ivEmptyIllustration: ImageView
+    private lateinit var tvEmptyTitle: TextView
+    private lateinit var tvEmptySubtitle: TextView
+    private lateinit var btnAddFirstStudent: Button
     private lateinit var searchView: SearchView
     private lateinit var progressBar: ProgressBar
     private lateinit var btnSync: Button
     private lateinit var tvSyncStatus: TextView
     private lateinit var filterSpinner: Spinner
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     private lateinit var adapter: StudentAdapter
+    private lateinit var shimmerAdapter: ShimmerStudentAdapter
     private lateinit var studentRepository: StudentRepository
     private lateinit var firebaseManager: FirebaseManager
 
@@ -39,22 +51,29 @@ class ViewStudentsActivity : AppCompatActivity() {
         initializeViews()
         setupRepository()
         setupRecyclerView()
+        setupShimmerRecyclerView()
         setupSearchAndFilters()
+        setupSwipeRefresh()
+        setupEmptyStateActions()
         loadStudents()
     }
 
     private fun initializeViews() {
         recyclerView = findViewById(R.id.recyclerViewStudents)
-        tvEmpty = findViewById(R.id.tvEmptyMessage)
+        recyclerViewShimmer = findViewById(R.id.recyclerViewShimmer)
+        emptyStateView = findViewById(R.id.emptyStateView)
+        ivEmptyIllustration = findViewById(R.id.ivEmptyIllustration)
+        tvEmptyTitle = findViewById(R.id.tvEmptyTitle)
+        tvEmptySubtitle = findViewById(R.id.tvEmptySubtitle)
+        btnAddFirstStudent = findViewById(R.id.btnAddFirstStudent)
         searchView = findViewById(R.id.searchView)
         progressBar = findViewById(R.id.progressBar)
         btnSync = findViewById(R.id.btnSync)
         tvSyncStatus = findViewById(R.id.tvSyncStatus)
         filterSpinner = findViewById(R.id.filterSpinner)
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
 
         firebaseManager = FirebaseManager.getInstance()
-
-        // Update sync button based on login status
         updateSyncUI()
     }
 
@@ -75,15 +94,27 @@ class ViewStudentsActivity : AppCompatActivity() {
             layoutManager = LinearLayoutManager(this@ViewStudentsActivity)
             adapter = this@ViewStudentsActivity.adapter
             setHasFixedSize(true)
+            itemAnimator = StudentItemAnimator()
+            addItemDecoration(StudentItemDecoration(
+                resources.getDimensionPixelSize(R.dimen.student_item_spacing)
+            ))
+        }
+    }
+
+    private fun setupShimmerRecyclerView() {
+        shimmerAdapter = ShimmerStudentAdapter()
+
+        recyclerViewShimmer.apply {
+            layoutManager = LinearLayoutManager(this@ViewStudentsActivity)
+            adapter = shimmerAdapter
+            setHasFixedSize(true)
+            isNestedScrollingEnabled = false
         }
     }
 
     private fun setupSearchAndFilters() {
-        // Setup search functionality
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
+            override fun onQueryTextSubmit(query: String?): Boolean = false
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 filterStudents(newText ?: "")
@@ -91,7 +122,6 @@ class ViewStudentsActivity : AppCompatActivity() {
             }
         })
 
-        // Setup filter spinner
         val filterOptions = arrayOf("All", "By Name", "By Course", "By Registration")
         val spinnerAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, filterOptions)
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -99,28 +129,64 @@ class ViewStudentsActivity : AppCompatActivity() {
 
         filterSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
-                val query = searchView.query.toString()
-                filterStudents(query)
+                filterStudents(searchView.query.toString())
             }
-
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
-        // Setup sync button
         btnSync.setOnClickListener {
             syncWithCloud()
         }
     }
 
+    private fun setupSwipeRefresh() {
+        swipeRefreshLayout.setOnRefreshListener {
+            loadStudents()
+        }
+    }
+
+    private fun setupEmptyStateActions() {
+        btnAddFirstStudent.setOnClickListener {
+            showToast("Add Student feature coming soon! 🎉")
+        }
+    }
+
     private fun loadStudents() {
-        showLoading(true)
+        showShimmerLoading(true)
 
         lifecycleScope.launch {
             studentRepository.getAllStudents().collect { students ->
                 allStudents = students
                 filterStudents(searchView.query.toString())
-                showLoading(false)
+                showShimmerLoading(false)
+                swipeRefreshLayout.isRefreshing = false
                 updateEmptyState()
+            }
+        }
+    }
+
+    private fun showShimmerLoading(show: Boolean) {
+        if (show) {
+            // Show shimmer, hide actual content and empty state
+            recyclerViewShimmer.visibility = android.view.View.VISIBLE
+            recyclerView.visibility = android.view.View.GONE
+            emptyStateView.visibility = android.view.View.GONE
+            progressBar.visibility = android.view.View.GONE
+
+            // Start shimmer animation
+            shimmerAdapter.startShimmer()
+        } else {
+            // Hide shimmer, show appropriate content
+            recyclerViewShimmer.visibility = android.view.View.GONE
+            shimmerAdapter.stopShimmer()
+
+            // Show either list or empty state based on data
+            if (adapter.itemCount > 0) {
+                recyclerView.visibility = android.view.View.VISIBLE
+                emptyStateView.visibility = android.view.View.GONE
+            } else {
+                recyclerView.visibility = android.view.View.GONE
+                emptyStateView.visibility = android.view.View.VISIBLE
             }
         }
     }
@@ -132,14 +198,13 @@ class ViewStudentsActivity : AppCompatActivity() {
             val filterType = filterSpinner.selectedItemPosition
             allStudents.filter { student ->
                 when (filterType) {
-                    1 -> student.name.contains(query, ignoreCase = true) // By Name
-                    2 -> student.course.contains(query, ignoreCase = true) // By Course
-                    3 -> student.regNumber.contains(query, ignoreCase = true) // By Reg Number
-                    else -> // All
-                        student.name.contains(query, ignoreCase = true) ||
-                                student.regNumber.contains(query, ignoreCase = true) ||
-                                student.course.contains(query, ignoreCase = true) ||
-                                student.email.contains(query, ignoreCase = true)
+                    1 -> student.name.contains(query, ignoreCase = true)
+                    2 -> student.course.contains(query, ignoreCase = true)
+                    3 -> student.regNumber.contains(query, ignoreCase = true)
+                    else -> student.name.contains(query, ignoreCase = true) ||
+                            student.regNumber.contains(query, ignoreCase = true) ||
+                            student.course.contains(query, ignoreCase = true) ||
+                            student.email.contains(query, ignoreCase = true)
                 }
             }
         }
@@ -148,38 +213,91 @@ class ViewStudentsActivity : AppCompatActivity() {
         updateEmptyState()
     }
 
+    private fun updateEmptyState() {
+        val hasStudents = adapter.itemCount > 0
+        val hasSearchQuery = searchView.query.toString().isNotEmpty()
+
+        if (!hasStudents) {
+            if (hasSearchQuery) {
+                showSearchEmptyState()
+            } else {
+                showNoStudentsEmptyState()
+            }
+            emptyStateView.visibility = android.view.View.VISIBLE
+            recyclerView.visibility = android.view.View.GONE
+        } else {
+            emptyStateView.visibility = android.view.View.GONE
+            recyclerView.visibility = android.view.View.VISIBLE
+        }
+
+        // Always hide shimmer when updating empty state
+        recyclerViewShimmer.visibility = android.view.View.GONE
+    }
+
+    private fun showNoStudentsEmptyState() {
+        ivEmptyIllustration.setImageResource(R.drawable.ic_empty_students)
+        tvEmptyTitle.text = "No Students Yet"
+        tvEmptySubtitle.text = "Get started by adding your first student to the system"
+        btnAddFirstStudent.visibility = android.view.View.VISIBLE
+
+        emptyStateView.alpha = 0f
+        emptyStateView.animate()
+            .alpha(1f)
+            .setDuration(600)
+            .start()
+    }
+
+    private fun showSearchEmptyState() {
+        val query = searchView.query.toString()
+        ivEmptyIllustration.setImageResource(R.drawable.ic_search_empty)
+        tvEmptyTitle.text = "No Results Found"
+        tvEmptySubtitle.text = "No students match \"$query\"\nTry different keywords or check the spelling"
+        btnAddFirstStudent.visibility = android.view.View.GONE
+
+        emptyStateView.alpha = 0f
+        emptyStateView.animate()
+            .alpha(1f)
+            .setDuration(400)
+            .start()
+    }
+
     private fun syncWithCloud() {
         if (!firebaseManager.isUserLoggedIn()) {
-            Toast.makeText(this, "Please login to sync with cloud", Toast.LENGTH_LONG).show()
+            showToast("Please login to sync with cloud")
             return
         }
 
-        showLoading(true)
+        showShimmerLoading(true)
         tvSyncStatus.text = "Syncing with cloud..."
 
         lifecycleScope.launch {
-            val success = studentRepository.syncAllData()
-
-            showLoading(false)
-            if (success) {
-                tvSyncStatus.text = "Last sync: Just now"
-                Toast.makeText(this@ViewStudentsActivity, "Sync completed successfully!", Toast.LENGTH_SHORT).show()
-                loadStudents() // Refresh data
-            } else {
-                tvSyncStatus.text = "Sync failed"
-                Toast.makeText(this@ViewStudentsActivity, "Sync failed. Check internet connection.", Toast.LENGTH_LONG).show()
+            when (val result = studentRepository.syncAllData()) {
+                is Resource.Success -> {
+                    showShimmerLoading(false)
+                    tvSyncStatus.text = "Last sync: Just now"
+                    showToast("Sync completed successfully! ✅")
+                    loadStudents()
+                }
+                is Resource.Error -> {
+                    showShimmerLoading(false)
+                    tvSyncStatus.text = "Sync failed"
+                    showToast("Sync failed: ${result.message}")
+                }
+                is Resource.Loading -> {
+                    // Loading state handled by showShimmerLoading(true)
+                }
             }
         }
     }
 
     private fun showStudentDetails(student: Student) {
         val details = """
-            Name: ${student.name}
-            Reg Number: ${student.regNumber}
-            Course: ${student.course}
-            Email: ${student.email.ifEmpty { "Not provided" }}
-            Phone: ${student.phone.ifEmpty { "Not provided" }}
-            ${if (student.isSynced) "✓ Synced to cloud" else "⚠ Local only"}
+            📝 Name: ${student.name}
+            🔢 Reg Number: ${student.regNumber}
+            🎓 Course: ${student.course}
+            📧 Email: ${student.email.ifEmpty { "Not provided" }}
+            📞 Phone: ${student.phone.ifEmpty { "Not provided" }}
+            ${if (student.isSynced) "✅ Synced to cloud" else "🔄 Local only"}
         """.trimIndent()
 
         AlertDialog.Builder(this)
@@ -189,37 +307,34 @@ class ViewStudentsActivity : AppCompatActivity() {
             .setNeutralButton("Delete") { _, _ ->
                 deleteStudent(student)
             }
+            .setNegativeButton("Edit") { _, _ ->
+                showToast("Edit feature coming soon! ✏️")
+            }
             .show()
     }
 
     private fun deleteStudent(student: Student) {
         AlertDialog.Builder(this)
             .setTitle("Delete Student")
-            .setMessage("Are you sure you want to delete ${student.name}?")
+            .setMessage("Are you sure you want to delete ${student.name}? This action cannot be undone.")
             .setPositiveButton("Delete") { _, _ ->
                 lifecycleScope.launch {
-                    studentRepository.deleteStudent(student.id)
-                    loadStudents() // Refresh list
-                    Toast.makeText(this@ViewStudentsActivity, "Student deleted", Toast.LENGTH_SHORT).show()
+                    when (val result = studentRepository.deleteStudent(student.id)) {
+                        is Resource.Success -> {
+                            loadStudents()
+                            showToast("${student.name} deleted successfully 🗑️")
+                        }
+                        is Resource.Error -> {
+                            showToast("Failed to delete student: ${result.message}")
+                        }
+                        is Resource.Loading -> {
+                            // Show loading if needed
+                        }
+                    }
                 }
             }
             .setNegativeButton("Cancel", null)
             .show()
-    }
-
-    private fun updateEmptyState() {
-        if (adapter.itemCount == 0) {
-            tvEmpty.text = if (searchView.query.isNotEmpty()) {
-                "No students found for '${searchView.query}'"
-            } else {
-                "No students registered yet"
-            }
-            tvEmpty.visibility = android.view.View.VISIBLE
-            recyclerView.visibility = android.view.View.GONE
-        } else {
-            tvEmpty.visibility = android.view.View.GONE
-            recyclerView.visibility = android.view.View.VISIBLE
-        }
     }
 
     private fun updateSyncUI() {
@@ -234,7 +349,7 @@ class ViewStudentsActivity : AppCompatActivity() {
         }
     }
 
-    private fun showLoading(show: Boolean) {
-        progressBar.visibility = if (show) android.view.View.VISIBLE else android.view.View.GONE
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

@@ -1,0 +1,4 @@
+<resources>
+    <!-- Existing dimensions -->
+    <dimen name="student_item_spacing">8dp</dimen>
+</resources>

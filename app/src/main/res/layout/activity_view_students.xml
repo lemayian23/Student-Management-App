@@ -1,105 +1,135 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#f5f5f5">
+    android:padding="16dp">
 
-    <!-- Header with Search and Sync -->
-    <com.google.android.material.card.MaterialCardView
+    <!-- Your existing header views (search, filter, sync) -->
+    <SearchView
+        android:id="@+id/searchView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="2dp">
+        android:layout_marginBottom="8dp"
+        android:queryHint="Search students..." />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
+
+        <Spinner
+            android:id="@+id/filterSpinner"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="12dp">
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp" />
 
-            <!-- Search Section -->
-            <androidx.appcompat.widget.SearchView
-                android:id="@+id/searchView"
+        <Button
+            android:id="@+id/btnSync"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sync" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvSyncStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="Sync status"
+        android:textSize="12sp" />
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!-- Shimmer Layout (Visible during loading) -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewShimmer"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:queryHint="Search students..." />
+                android:layout_height="match_parent"
+                android:visibility="gone" />
 
-            <!-- Filter and Sync Row -->
+            <!-- Actual Content Layout -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-                <TextView
+                <ProgressBar
+                    android:id="@+id/progressBar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Filter:"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:layout_marginEnd="8dp" />
+                    android:layout_gravity="center"
+                    android:visibility="gone" />
 
-                <Spinner
-                    android:id="@+id/filterSpinner"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="12dp" />
+                <LinearLayout
+                    android:id="@+id/emptyStateView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="32dp"
+                    android:visibility="gone">
 
-                <Button
-                    android:id="@+id/btnSync"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Sync"
-                    android:backgroundTint="#3B82F6"
-                    android:textColor="@android:color/white" />
+                    <ImageView
+                        android:id="@+id/ivEmptyIllustration"
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
+                        android:layout_marginBottom="24dp"
+                        android:contentDescription="Empty state illustration" />
+
+                    <TextView
+                        android:id="@+id/tvEmptyTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="No Students Found"
+                        android:textColor="@color/design_default_color_on_primary"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvEmptySubtitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_marginTop="8dp"
+                        android:text="Get started by adding your first student"
+                        android:textColor="@color/design_default_color_on_primary"
+                        android:textSize="16sp" />
+
+                    <Button
+                        android:id="@+id/btnAddFirstStudent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:text="Add First Student"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewStudents"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="visible" />
 
             </LinearLayout>
 
-            <!-- Sync Status -->
-            <TextView
-                android:id="@+id/tvSyncStatus"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Ready to sync"
-                android:textSize="12sp"
-                android:textColor="#6B7280"
-                android:layout_marginTop="8dp" />
+        </FrameLayout>
 
-        </LinearLayout>
-
-    </com.google.android.material.card.MaterialCardView>
-
-    <!-- Progress Bar -->
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_margin="16dp"
-        android:visibility="gone" />
-
-    <!-- Empty State -->
-    <TextView
-        android:id="@+id/tvEmptyMessage"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Loading students..."
-        android:textSize="16sp"
-        android:gravity="center"
-        android:layout_marginTop="50dp"
-        android:padding="16dp" />
-
-    <!-- Students List -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewStudents"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:padding="8dp" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </LinearLayout>

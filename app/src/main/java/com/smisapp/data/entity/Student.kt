@@ -2,81 +2,63 @@ package com.smisapp.data.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.ColumnInfo
-import androidx.room.Index
-import java.util.Date
+import java.util.UUID
 
-@Entity(
-    tableName = "students",
-    indices = [Index(value = ["reg_number"], unique = true)]
-)
+@Entity(tableName = "students")
 data class Student(
     @PrimaryKey
-    @ColumnInfo(name = "id")
-    val id: String = "", // Changed to String for Firebase compatibility
+    val id: String = UUID.randomUUID().toString(),
 
-    @ColumnInfo(name = "name")
+    // Basic information
     val name: String,
-
-    @ColumnInfo(name = "reg_number")
     val regNumber: String,
-
-    @ColumnInfo(name = "course")
     val course: String,
-
-    // New fields for enhanced features
-    @ColumnInfo(name = "email")
-    val email: String = "",
-
-    @ColumnInfo(name = "phone")
+    val email: String,
     val phone: String = "",
 
-    @ColumnInfo(name = "photo_url")
-    val photoUrl: String = "",
-
-    @ColumnInfo(name = "created_at")
-    val createdAt: Long = System.currentTimeMillis(),
-
-    @ColumnInfo(name = "updated_at")
+    // Cloud sync fields
+    val firebaseId: String = "",
+    val isSynced: Boolean = false,
     val updatedAt: Long = System.currentTimeMillis(),
 
-    @ColumnInfo(name = "is_synced")
-    val isSynced: Boolean = false,
+    // Additional fields for enhanced features
+    val photoUrl: String = "",
+    val createdAt: Long = System.currentTimeMillis(),
 
-    @ColumnInfo(name = "firebase_id")
-    val firebaseId: String = ""
+    // Optional fields for future expansion
+    val address: String = "",
+    val dateOfBirth: Long = 0L,
+    val gender: String = "",
+    val emergencyContact: String = "",
+    val notes: String = ""
 ) {
-    // Helper method to convert to Map for Firebase
-    fun toMap(): Map<String, Any> {
-        return mapOf(
-            "id" to id,
-            "name" to name,
-            "regNumber" to regNumber,
-            "course" to course,
-            "email" to email,
-            "phone" to phone,
-            "photoUrl" to photoUrl,
-            "createdAt" to createdAt,
-            "updatedAt" to updatedAt,
-            "isSynced" to isSynced
+
+    /**
+     * Validation helper methods
+     */
+    fun isValid(): Boolean {
+        return name.isNotBlank() && regNumber.isNotBlank() && course.isNotBlank()
+    }
+
+    fun hasMissingRequiredFields(): Boolean {
+        return name.isBlank() || regNumber.isBlank() || course.isBlank()
+    }
+
+    /**
+     * Copy with sync update
+     */
+    fun markAsSynced(firebaseId: String): Student {
+        return this.copy(
+            firebaseId = firebaseId,
+            isSynced = true,
+            updatedAt = System.currentTimeMillis()
         )
     }
 
-    companion object {
-        fun fromMap(map: Map<String, Any>): Student {
-            return Student(
-                id = map["id"] as? String ?: "",
-                name = map["name"] as? String ?: "",
-                regNumber = map["regNumber"] as? String ?: "",
-                course = map["course"] as? String ?: "",
-                email = map["email"] as? String ?: "",
-                phone = map["phone"] as? String ?: "",
-                photoUrl = map["photoUrl"] as? String ?: "",
-                createdAt = (map["createdAt"] as? Long) ?: System.currentTimeMillis(),
-                updatedAt = (map["updatedAt"] as? Long) ?: System.currentTimeMillis(),
-                isSynced = map["isSynced"] as? Boolean ?: true,
-                firebaseId = map["firebaseId"] as? String ?: ""
-            )
-        }
+    /**
+     * For search and display
+     */
+    fun getDisplayInfo(): String {
+        return "$name • $regNumber • $course"
     }
 }
