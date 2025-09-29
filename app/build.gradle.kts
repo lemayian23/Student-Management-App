@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    // REMOVE the Firebase plugin for now - we'll initialize manually
 }
 
 android {
@@ -54,8 +55,17 @@ dependencies {
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
-    // RecyclerView - ADD THIS LINE
+    // RecyclerView
     implementation("androidx.recyclerview:recyclerview:1.3.2")
+
+    // Firebase - Manual initialization (no plugin needed)
+    implementation("com.google.firebase:firebase-bom:32.8.0")
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.google.firebase:firebase-storage-ktx")
+
+    // Biometric
+    implementation("androidx.biometric:biometric:1.1.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

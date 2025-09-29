@@ -2,7 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+
     <application
+        android:name=".SMISApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -13,7 +17,7 @@
         android:theme="@style/Theme.SMIS"
         tools:targetApi="31">
 
-        <!-- Login Activity (Launcher) -->
+        <!-- Keep all your existing activities -->
         <activity
             android:name=".activity.LoginActivity"
             android:exported="true">
@@ -23,21 +27,17 @@
             </intent-filter>
         </activity>
 
-        <!-- Main Dashboard -->
         <activity
             android:name=".MainActivity"
             android:exported="false" />
 
-        <!-- Register Student -->
         <activity
             android:name=".activity.RegisterStudentActivity"
             android:exported="false" />
 
-        <!-- View Students -->
         <activity
             android:name=".activity.ViewStudentsActivity"
             android:exported="false" />
 
     </application>
-
 </manifest>
