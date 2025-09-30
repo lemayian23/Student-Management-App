@@ -39,5 +39,10 @@
             android:name=".activity.ViewStudentsActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".activity.EditStudentActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
+
     </application>
 </manifest>

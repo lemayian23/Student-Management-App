@@ -1,6 +1,8 @@
 package com.smisapp.activity
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AlertDialog
@@ -49,7 +51,7 @@ class ViewStudentsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_view_students)
 
         initializeViews()
-        setupRepository()
+        setupRepository() // This will now work
         setupRecyclerView()
         setupShimmerRecyclerView()
         setupSearchAndFilters()
@@ -77,6 +79,7 @@ class ViewStudentsActivity : AppCompatActivity() {
         updateSyncUI()
     }
 
+    // ADD THIS MISSING METHOD
     private fun setupRepository() {
         val database = (application as SMISApplication).database
         studentRepository = StudentRepository(
@@ -85,6 +88,67 @@ class ViewStudentsActivity : AppCompatActivity() {
         )
     }
 
+    private fun setupRecyclerView() {
+        adapter = StudentAdapter(
+            students = emptyList(),
+            onItemClick = { student ->
+                showStudentDetails(student)
+            },
+            onMoreActionsClick = { student, view ->
+                showMoreActionsMenu(student, view)
+            }
+        )
+
+        recyclerView.apply {
+            layoutManager = LinearLayoutManager(this@ViewStudentsActivity)
+            adapter = this@ViewStudentsActivity.adapter
+            setHasFixedSize(true)
+            itemAnimator = StudentItemAnimator()
+            addItemDecoration(StudentItemDecoration(
+                resources.getDimensionPixelSize(R.dimen.student_item_spacing)
+            ))
+        }
+    }
+
+    // Add this new method for the actions menu
+    private fun showMoreActionsMenu(student: Student, anchorView: View) {
+        val popup = PopupMenu(this, anchorView)
+        // For now, let's create a simple menu programmatically to avoid XML issues
+        popup.menu.add("Edit").setIcon(android.R.drawable.ic_menu_edit)
+        popup.menu.add("Share").setIcon(android.R.drawable.ic_menu_share)
+        popup.menu.add("QR Code").setIcon(android.R.drawable.ic_menu_camera)
+
+        popup.setOnMenuItemClickListener { item ->
+            when (item.title) {
+                "Edit" -> {
+                    // LAUNCH EDIT ACTIVITY - FIXED INTENT
+                    try {
+                        val intent = Intent(this@ViewStudentsActivity, EditStudentActivity::class.java)
+                        intent.putExtra(EditStudentActivity.EXTRA_STUDENT_ID, student.id)
+                        startActivity(intent)
+                    } catch (e: Exception) {
+                        showToast("Edit feature not available yet")
+                        e.printStackTrace()
+                    }
+                    true
+                }
+                "Share" -> {
+                    showToast("Share ${student.name} - Coming soon! 📤")
+                    true
+                }
+                "QR Code" -> {
+                    showToast("QR Code for ${student.name} - Coming soon! 📱")
+                    true
+                }
+                else -> false
+            }
+        }
+
+        popup.show()
+    }
+
+    // REMOVE THIS DUPLICATE METHOD - You had two setupRecyclerView() methods!
+    /*
     private fun setupRecyclerView() {
         adapter = StudentAdapter(emptyList()) { student ->
             showStudentDetails(student)
@@ -100,6 +164,7 @@ class ViewStudentsActivity : AppCompatActivity() {
             ))
         }
     }
+    */
 
     private fun setupShimmerRecyclerView() {
         shimmerAdapter = ShimmerStudentAdapter()

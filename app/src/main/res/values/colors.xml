@@ -4,4 +4,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="shimmer_color">#E0E0E0</color>
     <color name="shimmer_highlight">#F5F5F5</color>
+    <color name="card_stroke_color">#1E000000</color>
 </resources>

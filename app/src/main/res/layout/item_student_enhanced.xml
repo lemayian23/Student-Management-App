@@ -2,11 +2,15 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    app:cardCornerRadius="12dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    app:cardCornerRadius="16dp"
     app:cardElevation="4dp"
     app:cardUseCompatPadding="true">
 
@@ -14,66 +18,162 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="16dp">
+        android:padding="20dp">
 
-        <!-- Student Photo -->
-        <ImageView
-            android:id="@+id/ivStudentPhoto"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:scaleType="centerCrop"
-            android:background="@drawable/circle_background"
-            android:src="@drawable/ic_person_placeholder" />
+        <!-- Student Avatar with Status -->
+        <RelativeLayout
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginEnd="16dp">
+
+            <!-- Profile Image -->
+            <ImageView
+                android:id="@+id/ivStudentPhoto"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:scaleType="centerCrop"
+                android:background="@drawable/circle_background"
+                android:src="@drawable/ic_person_placeholder"
+                tools:src="@drawable/ic_person_placeholder" />
+
+            <!-- Sync Status Badge -->
+            <ImageView
+                android:id="@+id/ivSyncStatus"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/circle_background"
+                android:padding="2dp"
+                android:src="@drawable/ic_cloud_done"
+                android:contentDescription="Sync status"
+                tools:src="@drawable/ic_cloud_done" />
+
+        </RelativeLayout>
 
         <!-- Student Details -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:layout_weight="1"
             android:orientation="vertical">
 
+            <!-- Name Row -->
             <TextView
                 android:id="@+id/tvStudentName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Student Name"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textColor="#000000"
+                android:maxLines="1"
+                android:ellipsize="end"
+                tools:text="John Doe" />
 
-            <TextView
-                android:id="@+id/tvRegNumber"
+            <!-- Registration Number with Icon -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="REG001"
-                android:textSize="14sp"
-                android:textColor="?attr/colorPrimary" />
+                android:orientation="horizontal"
+                android:layout_marginTop="4dp"
+                android:gravity="center_vertical">
 
-            <TextView
-                android:id="@+id/tvCourse"
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:src="@drawable/ic_id_badge"
+                    android:tint="#2196F3"
+                    android:contentDescription="Registration number" />
+
+                <TextView
+                    android:id="@+id/tvRegNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="REG001"
+                    android:textSize="14sp"
+                    android:textColor="#2196F3"
+                    android:textStyle="normal"
+                    android:maxLines="1"
+                    tools:text="CS2024/001" />
+
+            </LinearLayout>
+
+            <!-- Course with Icon -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Computer Science"
-                android:textSize="14sp" />
+                android:orientation="horizontal"
+                android:layout_marginTop="4dp"
+                android:gravity="center_vertical">
 
-            <TextView
-                android:id="@+id/tvEmail"
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:src="@drawable/ic_course"
+                    android:tint="#757575"
+                    android:contentDescription="Course" />
+
+                <TextView
+                    android:id="@+id/tvCourse"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="Computer Science"
+                    android:textSize="14sp"
+                    android:textColor="#757575"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    tools:text="Bachelor of Computer Science" />
+
+            </LinearLayout>
+
+            <!-- Email with Icon -->
+            <LinearLayout
+                android:id="@+id/emailContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="student@email.com"
-                android:textSize="12sp"
-                android:textColor="?android:attr/textColorSecondary" />
+                android:orientation="horizontal"
+                android:layout_marginTop="4dp"
+                android:gravity="center_vertical"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:src="@drawable/ic_email"
+                    android:tint="#757575"
+                    android:contentDescription="Email" />
+
+                <TextView
+                    android:id="@+id/tvEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="student@email.com"
+                    android:textSize="13sp"
+                    android:textColor="#757575"
+                    android:maxLines="1"
+                    android:ellipsize="marquee"
+                    tools:text="john.doe@university.edu" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
-        <!-- Sync Status -->
+        <!-- Quick Actions Menu -->
         <ImageView
-            android:id="@+id/ivSyncStatus"
+            android:id="@+id/ivMoreActions"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/ic_cloud_done"
-            android:contentDescription="Sync status" />
+            android:layout_gravity="top"
+            android:src="@drawable/ic_more_vertical"
+            android:tint="#757575"
+            android:contentDescription="More actions"
+            android:padding="4dp"
+            android:visibility="gone" />
 
     </LinearLayout>
 
