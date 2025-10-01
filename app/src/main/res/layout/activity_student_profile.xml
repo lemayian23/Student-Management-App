@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Loading Progress -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginVertical="32dp" />
+
+        <!-- Content Layout -->
+        <LinearLayout
+            android:id="@+id/contentLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <!-- Profile Header -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingBottom="24dp">
+
+                <!-- Profile Photo -->
+                <ImageView
+                    android:id="@+id/ivProfilePhoto"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/ic_profile_placeholder"
+                    android:background="@drawable/circle_background"
+                    android:padding="4dp" />
+
+                <!-- Student Basic Info -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="16dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvStudentName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Student Name"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black" />
+
+                    <TextView
+                        android:id="@+id/tvRegNumber"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="REG12345"
+                        android:textSize="14sp"
+                        android:textColor="@color/gray_600"
+                        android:layout_marginTop="4dp" />
+
+                    <TextView
+                        android:id="@+id/tvCourse"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Computer Science"
+                        android:textSize="14sp"
+                        android:textColor="@color/gray_600"
+                        android:layout_marginTop="2dp" />
+
+                    <TextView
+                        android:id="@+id/tvSyncStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🔄 Local Only"
+                        android:textSize="12sp"
+                        android:textColor="@color/gray_500"
+                        android:layout_marginTop="8dp" />
+
+                </LinearLayout>
+
+                <!-- Action Buttons -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/btnCall"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_call"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="Call student" />
+
+                    <ImageButton
+                        android:id="@+id/btnEmail"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_email"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="Email student"
+                        android:layout_marginStart="8dp" />
+
+                    <ImageButton
+                        android:id="@+id/btnShare"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_share"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="Share student info"
+                        android:layout_marginStart="8dp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Edit Button -->
+            <Button
+                android:id="@+id/btnEdit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Edit Profile"
+                android:textAllCaps="false"
+                android:backgroundTint="@color/colorPrimary"
+                android:textColor="@color/white"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Contact Information Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Contact Information"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="12dp" />
+
+                    <!-- Email -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="8dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Email:"
+                            android:textStyle="bold"
+                            android:textColor="@color/gray_700" />
+
+                        <TextView
+                            android:id="@+id/tvEmail"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:text="student@email.com"
+                            android:textColor="@color/gray_600" />
+
+                    </LinearLayout>
+
+                    <!-- Phone -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="8dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Phone:"
+                            android:textStyle="bold"
+                            android:textColor="@color/gray_700" />
+
+                        <TextView
+                            android:id="@+id/tvPhone"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:text="+1234567890"
+                            android:textColor="@color/gray_600" />
+
+                    </LinearLayout>
+
+                    <!-- Address -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="8dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Address:"
+                            android:textStyle="bold"
+                            android:textColor="@color/gray_700" />
+
+                        <TextView
+                            android:id="@+id/tvAddress"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:text="123 Main Street"
+                            android:textColor="@color/gray_600" />
+
+                    </LinearLayout>
+
+                    <!-- Emergency Contact -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Emergency:"
+                            android:textStyle="bold"
+                            android:textColor="@color/gray_700" />
+
+                        <TextView
+                            android:id="@+id/tvEmergencyContact"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:text="Parent: +123456789"
+                            android:textColor="@color/gray_600" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Personal Information Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Personal Information"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="12dp" />
+
+                    <!-- Date of Birth -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="8dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Date of Birth:"
+                            android:textStyle="bold"
+                            android:textColor="@color/gray_700" />
+
+                        <TextView
+                            android:id="@+id/tvDateOfBirth"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:text="Jan 01, 2000"
+                            android:textColor="@color/gray_600" />
+
+                    </LinearLayout>
+
+                    <!-- Gender -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="8dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Gender:"
+                            android:textStyle="bold"
+                            android:textColor="@color/gray_700" />
+
+                        <TextView
+                            android:id="@+id/tvGender"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:text="Not specified"
+                            android:textColor="@color/gray_600" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Additional Notes Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Additional Notes"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:id="@+id/tvNotes"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="No additional notes provided."
+                        android:textColor="@color/gray_600"
+                        android:lineSpacingExtra="4dp" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- System Information -->
+            <TextView
+                android:id="@+id/tvCreatedAt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Registered: Jan 01, 2024"
+                android:textSize="12sp"
+                android:textColor="@color/gray_500"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="16dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

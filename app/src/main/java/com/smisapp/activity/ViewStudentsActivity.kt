@@ -365,17 +365,9 @@ class ViewStudentsActivity : AppCompatActivity() {
             ${if (student.isSynced) "✅ Synced to cloud" else "🔄 Local only"}
         """.trimIndent()
 
-        AlertDialog.Builder(this)
-            .setTitle("Student Details")
-            .setMessage(details)
-            .setPositiveButton("OK", null)
-            .setNeutralButton("Delete") { _, _ ->
-                deleteStudent(student)
-            }
-            .setNegativeButton("Edit") { _, _ ->
-                showToast("Edit feature coming soon! ✏️")
-            }
-            .show()
+        val intent = Intent(this, StudentProfileActivity::class.java)
+        intent.putExtra(StudentProfileActivity.EXTRA_STUDENT_ID, student.id)
+        startActivity(intent)
     }
 
     private fun deleteStudent(student: Student) {
