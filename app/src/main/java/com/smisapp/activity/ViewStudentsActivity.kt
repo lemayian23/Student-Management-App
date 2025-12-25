@@ -240,11 +240,6 @@ class ViewStudentsActivity : AppCompatActivity() {
 
             // Start shimmer animation
             shimmerAdapter.startShimmer()
-            // Double the shimmer animation
-            shimmerAdapter.startShimmer()
-
-            // Start shimmer animation
-            shimmerAdapter.startShimmer()
             // Start shimmer animation
             shimmerAdapter.startShimmer()
 
