@@ -245,6 +245,8 @@ class ViewStudentsActivity : AppCompatActivity() {
 
             // Start shimmer animation
             shimmerAdapter.startShimmer()
+            // Start shimmer animation
+            shimmerAdapter.startShimmer()
         } else {
             // Hide shimmer, show appropriate content
             recyclerViewShimmer.visibility = android.view.View.GONE
