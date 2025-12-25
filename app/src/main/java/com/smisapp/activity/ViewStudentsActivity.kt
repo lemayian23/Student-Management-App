@@ -357,7 +357,8 @@ class ViewStudentsActivity : AppCompatActivity() {
 
     private fun showStudentDetails(student: Student) {
         val details = """
-            📝 Name: ${student.name}
+            📝 First_Name: ${student.name}
+            📝 Second_Name: ${student.name}
             🔢 Reg Number: ${student.regNumber}
             🎓 Course: ${student.course}
             📧 Email: ${student.email.ifEmpty { "Not provided" }}
