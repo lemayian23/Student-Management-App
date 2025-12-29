@@ -337,7 +337,7 @@ class ViewStudentsActivity : AppCompatActivity() {
             .setDuration(400)
             .start()
     }
-
+    //try synching with cloud
     private fun syncWithCloud() {
         if (!firebaseManager.isUserLoggedIn()) {
             showToast("Please login to sync with cloud")
