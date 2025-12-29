@@ -267,7 +267,7 @@ class ViewStudentsActivity : AppCompatActivity() {
             }
         }
     }
-
+    //function to filter students
     private fun filterStudents(query: String) {
         val filteredStudents = if (query.isEmpty()) {
             allStudents
