@@ -289,7 +289,7 @@ class ViewStudentsActivity : AppCompatActivity() {
         adapter.updateStudents(filteredStudents)
         updateEmptyState()
     }
-
+    // try updating empty state
     private fun updateEmptyState() {
         val hasStudents = adapter.itemCount > 0
         val hasSearchQuery = searchView.query.toString().isNotEmpty()
